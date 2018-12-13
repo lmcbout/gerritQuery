@@ -10,6 +10,8 @@
   ],
   "dependencies": {
     "@theia/core": "latest",
+    "@theia/filesystem": "latest",
+    "@theia/workspace": "latest",
     "@types/node": "^8.0.0"
   },
   "devDependencies": {

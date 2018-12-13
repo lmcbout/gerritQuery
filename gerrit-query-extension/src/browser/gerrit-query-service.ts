@@ -28,9 +28,9 @@ export class GerritQueryService implements QuickOpenModel {
         protected readonly workspaceService: WorkspaceService,
     ) {
         // wait for the workspace root to be set
-        this.workspaceService.root.then(async root => {
+        this.workspaceService.roots.then(async root => {
             if (root) {
-                this.workspaceRootUri = new URI(root.uri).withoutScheme().toString();
+                this.workspaceRootUri = new URI(root[0].uri).withoutScheme().toString();
             }
         });
 
@@ -67,12 +67,12 @@ export class GerritQueryService implements QuickOpenModel {
 }
 
 export class ProjectQuickOpenItem extends QuickOpenItem {
-    
+
     constructor(
         @inject(WorkspaceService)
         protected readonly workspaceRoot: string | undefined,
         protected readonly projectLabel: string,
-        protected projectServer: QueryGitServer, 
+        protected projectServer: QueryGitServer,
         @inject(MessageService) private readonly messageService: MessageService,
 
     ) {
