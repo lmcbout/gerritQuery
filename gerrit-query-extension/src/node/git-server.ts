@@ -17,7 +17,7 @@ const exec = require('child_process').exec;
 // const querySite = `https://gitlab.com/api/v4/projects`;  // gitlab
 
 // Query projects string
-const gerritProjectQuery = `/projects/?b=master`;
+const gerritProjectQuery = `projects/?b=master`;
 const gitLabProjectQuery = `/api/v4/projects`;
 
 const gitClone = `git clone `;
@@ -46,7 +46,15 @@ export class GitServerNode implements QueryGitServer {
         const deferred = new Deferred<any>();
         const self = this;
         const isGitlab = self.cliParams.isGitLabProject();
-        let querySite = `${this.cliParams.getServer()}${gerritProjectQuery}`;
+        let querySite = `${this.cliParams.getServer()}`;
+        if (querySite) {
+            if (!querySite.toString().endsWith('/')) {
+                querySite = `${querySite}/${gerritProjectQuery}`;
+            } else {
+                querySite = `${querySite}${gerritProjectQuery}`;
+            }
+        }
+
         if (isGitlab) {
             this.logger.info(" Handling a GITLAB project");
             querySite = `${this.cliParams.getServer()}${gitLabProjectQuery}`;
@@ -89,8 +97,8 @@ export class GitServerNode implements QueryGitServer {
             } else {
                 // JSON structure for Gerrit not in GitLab
                 for (const property in json) {
-                        self.logger.debug(`project:${property}\n   id:${json[property].id}`); // Lower debug level
-                        arrayProject.push(`${property}`);
+                    self.logger.debug(`project:${property}\n   id:${json[property].id}`); // Lower debug level
+                    arrayProject.push(`${property}`);
                 }
             }
             deferred.resolve(arrayProject.toString());
@@ -120,7 +128,7 @@ export class GitServerNode implements QueryGitServer {
         if (isGitlab) {
             gitCommand = `${gitClone} ${this.gitLabMap.get(projectName)}`;
         }
-        self.logger.info("clone selected project command: " + gitCommand );
+        self.logger.info("clone selected project command: " + gitCommand);
 
         const deferred = new Deferred<any>();
 
