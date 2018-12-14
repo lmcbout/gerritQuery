@@ -1,5 +1,5 @@
 # Eclipse Gerrit Extension Example
-The example of how to build the Theia-based applications with the gerrit-query-extension.
+The example of how to build the Theia-based applications with the gerrit-query.
 This example uses a client-server application with Theia. This extensions reads the list of public Gerrit projects, show it in a list and when selected, clones it in the current workspace. By default, it queries the Eclipse gerrit project "yarn start" or "yarn start --server https://git.eclipse.org/r " , but you can use another gerrit  server. For example, start the application like "yarn start --server <Name of the Gerrit server> ". It can also give you the list of public projects from git lab "yarn start --server https://gitlab.com"
 
 ## Getting started
@@ -35,7 +35,7 @@ Open http://localhost:3000 in the browser.
 
 Start watching of the gerrit query extension.
 
-    cd theia-gerrit-query-extension
+    cd theia-gerrit-query
     yarn watch
 
 Start watching of the browser example.
@@ -52,7 +52,7 @@ Open http://localhost:3000 in the browser.
 
 Start watching of the git query extension.
 
-    cd theia-gerrit-query-extension
+    cd theia-gerrit-query
     yarn watch
 
 Start watching of the electron example.
