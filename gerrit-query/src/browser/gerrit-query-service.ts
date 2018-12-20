@@ -43,7 +43,7 @@ export class GerritQueryService implements QuickOpenModel {
         this.items = [];
         const projects: string[] = value.split(",");
         for (const project of projects) {
-            this.items.push(new ProjectQuickOpenItem(this.workspaceRootUri, project, this.server, this.messageService, this.preferences[`git-query.server`]));
+            this.items.push(new ProjectQuickOpenItem(this.workspaceRootUri, project, this.server, this.messageService, this.preferences[`gerrit-query.server`]));
         }
         this.quickOpenService.open(this, {
             placeholder: 'Type the name of the project you want to clone',
@@ -60,7 +60,7 @@ export class GerritQueryService implements QuickOpenModel {
         this.items = [];
         this.messageService.info("Potential list of Eclipse projects to clone will show shortly");
 
-        this.server.getProject(this.preferences[`git-query.server`]).then((projects) => {
+        this.server.getProject(this.preferences[`gerrit-query.server`]).then((projects) => {
             if (projects) {
                 this.open(projects);
             }
