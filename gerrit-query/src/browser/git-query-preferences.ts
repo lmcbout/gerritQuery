@@ -26,7 +26,7 @@ import {
 export const GitQueryConfigSchema: PreferenceSchema = {
     type: 'object',
     properties: {
-        'git-query.server': {
+        'gerrit-query.server': {
             type: 'string',
             description: 'Gerrit server to query.',
             default: "https://gerrit.ericsson.se"
@@ -35,7 +35,7 @@ export const GitQueryConfigSchema: PreferenceSchema = {
 };
 
 export interface GitQueryConfiguration {
-    'git-query.server': string;
+    'gerrit-query.server': string;
 }
 
 export const GitQueryPreferences = Symbol('GitQueryPreferences');
