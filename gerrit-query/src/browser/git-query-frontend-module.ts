@@ -10,12 +10,15 @@ import {
     CommandContribution,
     MenuContribution
 } from "@theia/core/lib/common";
-import {GerritQueryService} from './gerrit-query-service'
+import { GerritQueryService } from './gerrit-query-service'
 import { ContainerModule } from "inversify";
 import { WebSocketConnectionProvider } from '@theia/core/lib/browser';
 import { queryGitPath, QueryGitServer } from '../common/git-query-protocol';
+import { bindGitQueryPreferences } from './git-query-preferences';
 
 export default new ContainerModule(bind => {
+    bindGitQueryPreferences(bind);
+
     // add your contribution bindings here
     bind(QueryGitServer).toDynamicValue(ctx => {
         const provider = ctx.container.get(WebSocketConnectionProvider);

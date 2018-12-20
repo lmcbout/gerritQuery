@@ -10,7 +10,6 @@ import * as yargs from 'yargs';
 import { CliContribution } from '@theia/core/lib/node';
 import URI from "@theia/core/lib/common/uri";
 
-const defaultServer = "https://git.eclipse.org/r";
 const gitLabProject = '://gitlab.com';
 
 @injectable()
@@ -20,7 +19,7 @@ export class GerritClientContribution implements CliContribution {
     uri: URI | undefined;
 
     configure(conf: yargs.Argv): void {
-        conf.option('server', { description: 'The Gerrit server.', type: 'string', default: defaultServer });
+        conf.option('server', { description: 'The Gerrit server.', type: 'string' });
     }
 
     setArguments(args: yargs.Arguments): void {
@@ -53,14 +52,12 @@ export class GerritClientContribution implements CliContribution {
         return undefined;
     }
 
-    isGitLabProject(): boolean {
-        if (!!this.uri) {
-            if (this.uri.toString().search(gitLabProject) === -1) {
-                return false;
-            }
-            // Git Lab project
-            return true;
+    isGitLabProject(querySite: string): boolean {
+
+        if (querySite.search(gitLabProject) === -1) {
+            return false;
         }
-        return false;  // default
+        // Git Lab project
+        return true;
     }
 }

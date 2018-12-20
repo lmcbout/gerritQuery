@@ -17,8 +17,8 @@ export interface QueryGitServer {
      * Returns with a promise that resolves to the list of git project
      *  as a string. Resolves to `undefined` if the git is not yet set.
      */
-    getProject(): Promise<string | undefined>;
+    getProject(gerritServer: string): Promise<string | undefined>;
 
-    cloneProject(projectName: string, workspaceRoot: string):  Promise<string>;
+    cloneProject(projectName: string, workspaceRoot: string, gerritServer: string): Promise<string>;
 
 }
