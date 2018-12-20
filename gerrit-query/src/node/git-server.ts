@@ -13,12 +13,9 @@ import { ILogger } from "@theia/core";
 const request = require('request');
 const exec = require('child_process').exec;
 
-// const querySite = `https://git.eclipse.org/r/projects/?b=master`;
-// const querySite = `https://gitlab.com/api/v4/projects`;  // gitlab
-
 // Query projects string
 const gerritProjectQuery = `projects/?b=master`;
-const gitLabProjectQuery = `/api/v4/projects`;
+const gitLabProjectQuery = `api/v4/projects`;
 
 const gitClone = `git clone `;
 
@@ -33,32 +30,26 @@ export class GitServerNode implements QueryGitServer {
     protected workspaceRootUri: string | undefined = undefined;
     gitLabMap = new Map();
 
-    getProject(): Promise<string | undefined> {
-        return this.searchForProject();
+    getProject(gerritServer: string): Promise<string | undefined> {
+        return this.searchForProject(gerritServer);
     }
 
-    cloneProject(projectName: string, workspaceRoot: string): Promise<string> {
-        return this.cloneSelectedProject(projectName, workspaceRoot);
+    cloneProject(projectName: string, workspaceRoot: string, gerritServer: string): Promise<string> {
+        return this.cloneSelectedProject(projectName, workspaceRoot, gerritServer);
     }
 
-    protected async  searchForProject(): Promise<string> {
-
+    protected async  searchForProject(gerritServer: string): Promise<string> {
+        let querySite = this.getQueryServer(gerritServer);
         const deferred = new Deferred<any>();
         const self = this;
-        const isGitlab = self.cliParams.isGitLabProject();
-        let querySite = `${this.cliParams.getServer()}`;
-        if (querySite) {
-            if (!querySite.toString().endsWith('/')) {
-                querySite = `${querySite}/${gerritProjectQuery}`;
-            } else {
-                querySite = `${querySite}${gerritProjectQuery}`;
-            }
-        }
+        const isGitlab = self.cliParams.isGitLabProject(querySite);
+        let queryProject = `${gerritProjectQuery}`;
 
         if (isGitlab) {
-            this.logger.info(" Handling a GITLAB project");
-            querySite = `${this.cliParams.getServer()}${gitLabProjectQuery}`;
+            queryProject = `${gitLabProjectQuery}`;
         }
+        // Build the query 
+        querySite = `${querySite}/${queryProject}`;
 
         this.logger.info(" Query site for projects: " + querySite);
 
@@ -109,7 +100,7 @@ export class GitServerNode implements QueryGitServer {
         return Promise.resolve(content);
     }
 
-    protected async  cloneSelectedProject(projectName: string, workspaceRoot: string): Promise<string> {
+    protected async  cloneSelectedProject(projectName: string, workspaceRoot: string, gerritServer: string): Promise<string> {
         // Eclipse projects have often 2 parts defining the project i.e. egerrit/org.eclipse.egerrit
         // When cloning manually, "git clone ..." will put the project in a folder defined in 
         // the second portion of the name, so I decided to take a siilar approach and when it is defined,
@@ -123,8 +114,10 @@ export class GitServerNode implements QueryGitServer {
             testWorkspace = `${workspaceRoot}/${origin[1]}`;
         }
 
-        let gitCommand = `${gitClone}${this.cliParams.getServer()}/${projectName}.git`;
-        const isGitlab = this.cliParams.isGitLabProject();
+        let querySite = this.getQueryServer(gerritServer);
+        let gitCommand = `${gitClone}${querySite}/${projectName}.git`;
+        const isGitlab = this.cliParams.isGitLabProject(querySite);
+
         if (isGitlab) {
             gitCommand = `${gitClone} ${this.gitLabMap.get(projectName)}`;
         }
@@ -146,4 +139,27 @@ export class GitServerNode implements QueryGitServer {
         return Promise.resolve(content);
     }
 
+    /**
+     * Return the server URI as a string being used for the query. If server provided on the command line,
+     *  we use it otherwise, we use the preference one.
+     * @param prefServer 
+     * @returns string
+     */
+    protected getQueryServer(prefServer: string): string {
+        const cliServer = this.cliParams.getServer();
+        let useServer = '';
+        console.log('getQueryServer().cliServer: ' + cliServer);
+        if (!!cliServer && cliServer.toString().trim().length > 0) {
+            this.logger.info(" Query server from COMMAND line " + cliServer);
+            useServer = cliServer.toString();
+        } else {
+            this.logger.info(" Query server from PREFRERENCE " + prefServer);
+            useServer = prefServer;
+        }
+        if (useServer.endsWith('/')) {
+            this.logger.info(`----git-server.getQueryServer() remove the ending / ---------`);
+            useServer = useServer.slice(0, useServer.length - 1);
+        }
+        return useServer;
+    }
 }
