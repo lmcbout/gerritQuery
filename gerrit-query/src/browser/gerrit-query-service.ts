@@ -107,23 +107,23 @@ export class ProjectQuickOpenItem extends QuickOpenItem {
         }
 
         let workspacePath = "./"; // if the workspaceroot is not defined, use folder where you started
-        console.log('---JBJB workspaceRoot: ' + this.workspaceRoot);
+        //       console.log('---JBJB workspaceRoot: ' + this.workspaceRoot);
         if (this.workspaceRoot) {
             workspacePath = this.workspaceRoot;
-            console.log('---JBJB workspacePATH: ' + workspacePath);
+            //            console.log('---JBJB workspacePATH: ' + workspacePath);
         }
         this.projectServer.cloneProject(this.getLabel(), workspacePath, this.gerritServer)
             .then((content) => {
-                console.log('--JB START clone ----------------');
+                //                console.log('--JB START clone ----------------');
                 // Data received after cloning the project repositories
                 if (content.startsWith('fatal')) {
                     //  Project already exist in th current folder
                     this.messageService.error(content);
-                    console.log('--JB clone ERROR ----------------');
+                    //                    console.log('--JB clone ERROR ----------------');
                 } else {
                     //  Clone success;
                     this.messageService.info(content + "\n Clone completed");
-                    console.log('--JB clone COMPLETED ----------------');
+                    //                    console.log('--JB clone COMPLETED ----------------');
                 }
             });
 
