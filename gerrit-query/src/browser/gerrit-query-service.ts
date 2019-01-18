@@ -5,7 +5,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 import { inject, injectable } from "inversify";
-import { FileSystem } from '@theia/filesystem/lib/common/filesystem';
+// import { FileSystem } from '@theia/filesystem/lib/common/filesystem';
 import { MessageService } from "@theia/core/lib/common";
 import { QueryGitServer } from '../common';
 import { QuickOpenService, QuickOpenModel, QuickOpenItem, QuickOpenMode } from "@theia/core/lib/browser/quick-open/";
@@ -18,11 +18,21 @@ export class GerritQueryService implements QuickOpenModel {
 
     protected items: QuickOpenItem[] = [];
     protected workspaceRootUri: string | undefined = undefined;
+    @inject(MessageService)
+    protected readonly messageService!: MessageService;
+    @inject(QuickOpenService)
+    protected readonly quickOpenService!: QuickOpenService;
+    // @inject(QueryGitServer)
+    // protected readonly server!: QueryGitServer;
+    // @inject(WorkspaceService)
+    // protected readonly workspaceService!: WorkspaceService;
+    // @inject(GitQueryPreferences)
+    // protected readonly preferences!: GitQueryPreferences;
 
     constructor(
-        @inject(FileSystem) protected readonly fileSystem: FileSystem,
-        @inject(MessageService) private readonly messageService: MessageService,
-        @inject(QuickOpenService) protected readonly quickOpenService: QuickOpenService,
+        //       @inject(FileSystem) protected readonly fileSystem: FileSystem,
+        // @inject(MessageService) private readonly messageService: MessageService,
+        // @inject(QuickOpenService) protected readonly quickOpenService: QuickOpenService,
         @inject(QueryGitServer)
         protected readonly server: QueryGitServer,
         @inject(WorkspaceService)
@@ -44,6 +54,7 @@ export class GerritQueryService implements QuickOpenModel {
         const projects: string[] = value.split(",");
         for (const project of projects) {
             this.items.push(new ProjectQuickOpenItem(this.workspaceRootUri, project, this.server, this.messageService, this.preferences[`gerrit-query.server`]));
+            // this.items.push(new ProjectQuickOpenItem(this.workspaceRootUri, project, this.server, this.preferences[`gerrit-query.server`]));
         }
         this.quickOpenService.open(this, {
             placeholder: 'Type the name of the project you want to clone',
@@ -69,7 +80,11 @@ export class GerritQueryService implements QuickOpenModel {
 
 }
 
+
+@injectable()
 export class ProjectQuickOpenItem extends QuickOpenItem {
+    // @inject(MessageService)
+    // protected readonly messageService!: MessageService;
 
     constructor(
         @inject(WorkspaceService)
@@ -92,18 +107,23 @@ export class ProjectQuickOpenItem extends QuickOpenItem {
         }
 
         let workspacePath = "./"; // if the workspaceroot is not defined, use folder where you started
+        console.log('---JBJB workspaceRoot: ' + this.workspaceRoot);
         if (this.workspaceRoot) {
             workspacePath = this.workspaceRoot;
+            console.log('---JBJB workspacePATH: ' + workspacePath);
         }
         this.projectServer.cloneProject(this.getLabel(), workspacePath, this.gerritServer)
             .then((content) => {
+                console.log('--JB START clone ----------------');
                 // Data received after cloning the project repositories
                 if (content.startsWith('fatal')) {
                     //  Project already exist in th current folder
                     this.messageService.error(content);
+                    console.log('--JB clone ERROR ----------------');
                 } else {
                     //  Clone success;
                     this.messageService.info(content + "\n Clone completed");
+                    console.log('--JB clone COMPLETED ----------------');
                 }
             });
 
