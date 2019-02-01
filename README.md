@@ -63,3 +63,6 @@ Start watching of the electron example.
 
 Launch `Start Electron Backend` configuration from VS code.
 
+## [How to configure Gerrit/Gitlab project](https://github.com/lmcbout/gerritQuery/blob/master/configuration.md)
+
+   This will show how to browse and clone projects from the defined query server.
