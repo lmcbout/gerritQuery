@@ -30,12 +30,36 @@ export const GitQueryConfigSchema: PreferenceSchema = {
             type: 'string',
             description: 'Gerrit server to query.',
             default: "https://gerrit.ericsson.se"
-        }
+        },
+        'gerrit-query.gitlabToken': {
+            type: 'string',
+            description: 'Token used for Gitlab authentication.',
+            default: undefined
+        },
+        'gerrit-query.gerritUser': {
+            type: 'string',
+            description: 'User login used for Gerrit authentication.',
+            default: undefined
+        },
+        'gerrit-query.gerritPassword': {
+            type: 'string',
+            description: 'Password used for Gerrit authentication.',
+            default: undefined
+        },
+        'gerrit-query.limit': {
+            type: 'number',
+            description: 'Query limit the number of result.',
+            default: 20
+        },
     }
 };
 
 export interface GitQueryConfiguration {
     'gerrit-query.server': string;
+    'gerrit-query.gitlabToken': string;
+    'gerrit-query.gerritUser': string;
+    'gerrit-query.gerritPassword': string;
+    'gerrit-query.limit': number;
 }
 
 export const GitQueryPreferences = Symbol('GitQueryPreferences');

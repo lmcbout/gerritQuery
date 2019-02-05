@@ -12,6 +12,8 @@ export const queryGitPath = '/service/gitQuery';
  */
 export const QueryGitServer = Symbol('QueryGitServer');
 export interface QueryGitServer {
+    setQueryLimit(limit: number): any;
+    setCredentials(arg0: string, user: string | undefined, password: string | undefined): any;
 
     /**
      * Returns with a promise that resolves to the list of git project

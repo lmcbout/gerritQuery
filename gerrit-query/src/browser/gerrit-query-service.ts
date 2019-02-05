@@ -5,7 +5,6 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 import { inject, injectable } from "inversify";
-// import { FileSystem } from '@theia/filesystem/lib/common/filesystem';
 import { MessageService } from "@theia/core/lib/common";
 import { QueryGitServer } from '../common';
 import { QuickOpenService, QuickOpenModel, QuickOpenItem, QuickOpenMode } from "@theia/core/lib/browser/quick-open/";
@@ -46,7 +45,6 @@ export class GerritQueryService implements QuickOpenModel {
                 this.workspaceRootUri = new URI(root[0].uri).withoutScheme().toString();
             }
         });
-
     }
 
     open(value: string): void {
@@ -71,10 +69,16 @@ export class GerritQueryService implements QuickOpenModel {
         this.items = [];
         this.messageService.info("Potential list of Eclipse projects to clone will show shortly");
 
+        const gitlabtoken = this.preferences[`gerrit-query.gitlabToken`];
+        this.server.setCredentials(gitlabtoken, this.preferences[`gerrit-query.gerritUser`], this.preferences[`gerrit-query.gerritPassword`]);
+        this.server.setQueryLimit(this.preferences[`gerrit-query.limit`]);
+
         this.server.getProject(this.preferences[`gerrit-query.server`]).then((projects) => {
             if (projects) {
                 this.open(projects);
             }
+        }, (onrejected) => {
+            this.messageService.warn(`${onrejected}`, { timeout: 0 });
         });
     }
 
@@ -119,11 +123,9 @@ export class ProjectQuickOpenItem extends QuickOpenItem {
                 if (content.startsWith('fatal')) {
                     //  Project already exist in th current folder
                     this.messageService.error(content);
-                    //                    console.log('--JB clone ERROR ----------------');
                 } else {
                     //  Clone success;
                     this.messageService.info(content + "\n Clone completed");
-                    //                    console.log('--JB clone COMPLETED ----------------');
                 }
             });
 
