@@ -276,7 +276,7 @@ export class GitServerNode implements QueryGitServer {
 
     private buildCloneGerritCommand(projectName: string, querySite: string): string {
         console.log(`---- buildCloneGerritCommand() auth: ${auth}`);
-        if (!!auth || auth !== null) {
+        if (!!auth) {
             // Have User identification
             const projectUri: URI = new URI(querySite);
             console.log('--GERRIT uri  \n\tscheme: ' + projectUri.scheme +
@@ -286,7 +286,7 @@ export class GitServerNode implements QueryGitServer {
             );
             return `${gitClone} ${projectUri.scheme}://${username}:${password}@${projectUri.authority}/a/${projectName}`;
         } else {
-            return `${gitClone}${querySite}/${projectName}.git`;
+            return `${gitClone} ${querySite}/${projectName}.git`;
 
         }
     }
