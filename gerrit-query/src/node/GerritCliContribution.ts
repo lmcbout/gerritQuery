@@ -24,7 +24,9 @@ export class GerritClientContribution implements CliContribution {
 
     setArguments(args: yargs.Arguments): void {
         this.server = args.server;
-        this.uri = new URI(this.server);
+        if (this.server != undefined) {
+            this.uri = new URI(this.server);
+        }
     }
 
     getScheme() {

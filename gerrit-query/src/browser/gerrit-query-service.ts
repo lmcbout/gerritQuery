@@ -42,7 +42,7 @@ export class GerritQueryService implements QuickOpenModel {
         // wait for the workspace root to be set
         this.workspaceService.roots.then(async root => {
             if (root) {
-                this.workspaceRootUri = new URI(root[0].uri).withoutScheme().toString();
+                this.workspaceRootUri = new URI(root[0].uri).path.toString();
             }
         });
     }
